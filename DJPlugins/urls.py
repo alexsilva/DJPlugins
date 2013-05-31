@@ -20,7 +20,7 @@ from plugins.validate import app_exists
 for app in App.objects.all():
     if app_exists(app.name):
         print "LOG: urls:add-prefix %s"%app
-        urlpatterns += (
+        urlpatterns += patterns('',
             url(app.prefix, include(app.name + ".urls")),
         )
     else:
