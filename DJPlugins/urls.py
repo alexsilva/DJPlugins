@@ -15,10 +15,10 @@ urlpatterns = patterns('',
 )
 #
 from plugins.models import App
-from plugins.validate import app_exists
+from plugins.validate import exists
 
 for app in App.objects.all():
-    if app_exists(app.name):
+    if exists(app.name):
         print "LOG: urls:add-prefix %s"%app
         urlpatterns += patterns('',
             url(app.prefix, include(app.name + ".urls")),

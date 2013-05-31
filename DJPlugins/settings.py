@@ -125,10 +125,10 @@ INSTALLED_APPS = (
 
 ##### interface db from app ###############################
 from plugins.models import App
-from plugins.validate import app_exists
+from plugins.validate import exists
 
 for app in App.objects.all():
-    if app_exists(app.name):
+    if exists(app.name):
         print "LOG: settings::installed app %s"%app
         INSTALLED_APPS += (app.name, )
     else:

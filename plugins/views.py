@@ -1,7 +1,7 @@
 # Create your views here.
 from django.http import HttpResponse
 
-from validate import app_exists
+from validate import exists
 from django.conf import settings
 
 def exists(request, app_name):

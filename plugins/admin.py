@@ -3,7 +3,7 @@ from django.contrib.admin import site
 from plugins.models import App
 
 from django.conf import settings
-from plugins.validate import app_exists
+from plugins.validate import exists
 import sys
 
 class AppAdmin(admin.ModelAdmin):
@@ -17,7 +17,7 @@ class AppAdmin(admin.ModelAdmin):
             del sys.modules[settings.ROOT_URLCONF]
 
     def add_configure(self, obj):
-        if app_exists(obj.name) and not obj.name in settings.INSTALLED_APPS:
+        if exists(obj.name) and not obj.name in settings.INSTALLED_APPS:
             print "LOG: settings::add "+obj.name
             settings._wrapped.INSTALLED_APPS += (obj.name, ) # hardcore change!
         else:

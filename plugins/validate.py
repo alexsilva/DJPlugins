@@ -1,5 +1,5 @@
 
-def app_exists(name):
+def exists(name):
     """
      check if the app exists in path
     :param name:
