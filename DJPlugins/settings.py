@@ -154,10 +154,10 @@ LOGGING = {
 ## Plugins settings
 from plugins import settings
 
-pgl_settings = settings.Settings(locals())
+PGL_SETTINGS = settings.Settings(locals())
 
 # logs settings
-pgl_settings.set_loggins(os.path.join(os.path.dirname(__file__)))
+PGL_SETTINGS.set_loggins(os.path.join(os.path.dirname(__file__)))
 
 # apps settings
-pgl_settings.set_installeds_apps()
+PGL_SETTINGS.set_installeds_apps()
