@@ -15,18 +15,9 @@ urlpatterns = patterns('',
 )
 
 from django.conf import settings
-from plugins.validate import exists
-from plugins.models import App
-import logging
 
-logger = logging.getLogger(settings.PGL_SETTINGS.get_logger_name())
+# configuring the object
+settings.PGL_SETTINGS(locals())
 
-for app in App.objects.all():
-    if exists(app.name):
-        logger.debug("URLS: regex-pattern::add %s"%app)
-
-        urlpatterns += patterns('',
-            url(app.prefix, include(app.name + ".urls")),
-        )
-    else:
-        logger.debug("URLS: regex-pattern::app not found %s"%app)
+# urls patterns settings
+settings.PGL_SETTINGS.set_urlpatterns()

@@ -2,8 +2,7 @@
 ## Plugins settings
 from plugins.models import App
 from plugins.validate import exists
-import logging
-import os
+import logging, os
 
 
 class Settings(object):
@@ -14,6 +13,9 @@ class Settings(object):
     logger_filename = logger_name.replace(".","_") + ".log"
 
     def __init__(self, _locals):
+        self._locals = _locals
+
+    def __call__(self, _locals):
         self._locals = _locals
 
     @classmethod
@@ -32,6 +34,19 @@ class Settings(object):
                 self._locals["INSTALLED_APPS"] += (app.name, )
             else:
                 logger.debug("settings::installed app not found %s"%app)
+
+    def set_urlpatterns(self):
+        logger = logging.getLogger(self.logger_name)
+
+        for app in App.objects.all():
+            if exists(app.name):
+                logger.debug("URLS: regex-pattern::add %s"%app)
+
+                self._locals["urlpatterns"] += self._locals["patterns"]('',
+                    self._locals["url"](app.prefix, self._locals["include"](app.name + ".urls")),
+                )
+            else:
+                logger.debug("URLS: regex-pattern::app not found %s"%app)
 
     def set_loggins(self, path=''):
         self._locals['LOGGING']['loggers'][self.logger_name] = {
