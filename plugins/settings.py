@@ -41,12 +41,14 @@ class Settings(object):
         """
         Url patterns settings
         """
+        from django.conf.urls import patterns, include, url
+
         for app in App.objects.all():
             if exists(app.name):
                 self.logger.debug("URLS: regex-pattern::add %s"%app)
 
-                self._locals["urlpatterns"] += self._locals["patterns"]('',
-                    self._locals["url"](app.prefix, self._locals["include"](app.name + ".urls")),
+                self._locals["urlpatterns"] += patterns('',
+                    url(app.prefix, include(app.name + ".urls")),
                 )
             else:
                 self.logger.debug("URLS: regex-pattern::app not found %s"%app)
