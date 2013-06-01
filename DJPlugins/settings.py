@@ -123,19 +123,6 @@ INSTALLED_APPS = (
     'plugins',
 )
 
-##### interface db from app ###############################
-from plugins.models import App
-from plugins.validate import exists
-
-for app in App.objects.all():
-    if exists(app.name):
-        print "LOG: settings::installed app %s"%app
-        INSTALLED_APPS += (app.name, )
-    else:
-        print "LOG: settings::installed app not found %s"%app
-
-###########################################################
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -164,3 +151,13 @@ LOGGING = {
         },
     }
 }
+## Plugins settings
+from plugins import settings
+
+pgl_settings = settings.Settings(locals())
+
+# logs settings
+pgl_settings.set_loggins(os.path.join(os.path.dirname(__file__)))
+
+# apps settings
+pgl_settings.set_installeds_apps()
