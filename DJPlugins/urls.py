@@ -13,15 +13,20 @@ urlpatterns = patterns('',
 
     url(r'^plugins/', include("plugins.urls")),
 )
-#
-from plugins.models import App
+
+from django.conf import settings
 from plugins.validate import exists
+from plugins.models import App
+import logging
+
+logger = logging.getLogger(settings.PGL_SETTINGS.get_logger_name())
 
 for app in App.objects.all():
     if exists(app.name):
-        print "LOG: urls:add-prefix %s"%app
+        logger.debug("URLS: regex-pattern::add %s"%app)
+
         urlpatterns += patterns('',
             url(app.prefix, include(app.name + ".urls")),
         )
     else:
-        print "LOG: urls:add-prefix app not found %s"%app
+        logger.debug("URLS: regex-pattern::app not found %s"%app)

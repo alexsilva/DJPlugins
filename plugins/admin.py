@@ -4,9 +4,11 @@ from plugins.models import App
 
 from django.conf import settings
 from plugins.validate import exists
-import sys
+import sys, logging
+
 
 class AppAdmin(admin.ModelAdmin):
+    logger = logging.getLogger(settings.PGL_SETTINGS.get_logger_name())
 
     def force_url_conf_reload(self):
         """
@@ -18,24 +20,24 @@ class AppAdmin(admin.ModelAdmin):
 
     def add_configure(self, obj):
         if exists(obj.name) and not obj.name in settings.INSTALLED_APPS:
-            print "LOG: settings::add "+obj.name
+            self.logger.debug("MODEL: settings::installed-app "+obj.name)
             settings._wrapped.INSTALLED_APPS += (obj.name, ) # hardcore change!
         else:
-            print "LOG: settings::add fail"
+            self.logger.debug("MODEL: settings::installed-app "+obj.name)
 
         # Force reloading the url conf standard.
         self.force_url_conf_reload()
 
     def del_configure(self, obj):
         if obj.name in settings.INSTALLED_APPS:
-            print "LOG: settings::delete "+obj.name
+            self.logger.debug("MODEL: settings::delete-app "+obj.name)
 
             apps = list(settings.INSTALLED_APPS)
             apps.remove( obj.name )
 
             settings._wrapped.INSTALLED_APPS = apps # hardcore change!
         else:
-            print "LOG: settings::delete fail"
+            self.logger.debug("MODEL: settings::delete-app fail "+obj.name)
 
         # Force reloading the url conf standard.
         self.force_url_conf_reload()
