@@ -22,31 +22,34 @@ class Settings(object):
     def get_logger_name(cls):
         return cls.logger_name
 
+    @property
+    def logger(self):
+        return logging.getLogger(self.logger_name)
+
     def set_installeds_apps(self):
         """
         Installed apps settings
         """
-        logger = logging.getLogger(self.logger_name)
-
         for app in App.objects.all():
             if exists(app.name):
-                logger.debug("settings::installed app %s"%app)
+                self.logger.debug("settings::installed app %s"%app)
                 self._locals["INSTALLED_APPS"] += (app.name, )
             else:
-                logger.debug("settings::installed app not found %s"%app)
+                self.logger.debug("settings::installed app not found %s"%app)
 
     def set_urlpatterns(self):
-        logger = logging.getLogger(self.logger_name)
-
+        """
+        Url patterns settings
+        """
         for app in App.objects.all():
             if exists(app.name):
-                logger.debug("URLS: regex-pattern::add %s"%app)
+                self.logger.debug("URLS: regex-pattern::add %s"%app)
 
                 self._locals["urlpatterns"] += self._locals["patterns"]('',
                     self._locals["url"](app.prefix, self._locals["include"](app.name + ".urls")),
                 )
             else:
-                logger.debug("URLS: regex-pattern::app not found %s"%app)
+                self.logger.debug("URLS: regex-pattern::app not found %s"%app)
 
     def set_loggins(self, path=''):
         self._locals['LOGGING']['loggers'][self.logger_name] = {
