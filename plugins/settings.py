@@ -16,6 +16,10 @@ class Settings(object):
     def __init__(self, _locals):
         self._locals = _locals
 
+    @classmethod
+    def get_logger_name(cls):
+        return cls.logger_name
+
     def set_installeds_apps(self):
         """
         Installed apps settings
