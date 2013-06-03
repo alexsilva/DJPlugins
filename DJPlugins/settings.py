@@ -160,4 +160,4 @@ PGL_SETTINGS = settings.Settings(locals())
 PGL_SETTINGS.set_loggins(os.path.join(os.path.dirname(__file__)))
 
 # apps settings
-PGL_SETTINGS.set_installeds_apps()
+PGL_SETTINGS.set_installed_apps()

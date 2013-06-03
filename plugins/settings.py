@@ -50,7 +50,7 @@ class Settings(object):
     def log(self):
         return self.logger.log
 
-    def set_installeds_apps(self):
+    def set_installed_apps(self):
         """
         Installed apps settings
         """
