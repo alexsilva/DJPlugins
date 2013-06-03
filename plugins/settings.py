@@ -34,8 +34,7 @@ class Settings(object):
     """
     Modeling system configuration plugins.
     """
-    logger_name = "plugins.apps.debug"
-    logger_filename = logger_name.replace(".","_") + ".log"
+    logger = Logger()
 
     def __init__(self, _locals):
         self._locals = _locals
@@ -45,11 +44,11 @@ class Settings(object):
 
     @classmethod
     def get_logger_name(cls):
-        return cls.logger_name
+        return cls.logger.name
 
     @property
-    def logger(self):
-        return logging.getLogger(self.logger_name)
+    def log(self):
+        return self.logger.log
 
     def set_installeds_apps(self):
         """
@@ -57,10 +56,10 @@ class Settings(object):
         """
         for app in App.objects.all():
             if exists(app.name):
-                self.logger.debug("settings::installed app %s"%app)
+                self.log.debug("settings::installed app %s"%app)
                 self._locals["INSTALLED_APPS"] += (app.name, )
             else:
-                self.logger.debug("settings::installed app not found %s"%app)
+                self.log.debug("settings::installed app not found %s"%app)
 
     def set_urlpatterns(self):
         """
@@ -70,18 +69,28 @@ class Settings(object):
 
         for app in App.objects.all():
             if exists(app.name):
-                self.logger.debug("URLS: regex-pattern::add %s"%app)
+                self.log.debug("URLS: regex-pattern::add %s"%app)
 
                 self._locals["urlpatterns"] += patterns('',
                     url(app.prefix, include(app.name + ".urls")),
                 )
             else:
-                self.logger.debug("URLS: regex-pattern::app not found %s"%app)
+                self.log.debug("URLS: regex-pattern::app not found %s"%app)
 
-    def set_loggins(self, path=''):
-        self._locals['LOGGING']['loggers'][self.logger_name] = {
+    def set_loggins(self, path, name='', filename=''):
+        """
+        Log Settings application.
+
+        :param name: Log name (optional).
+        :param filename: Name of the log file (optional).
+        :param path: Path of the log file.
+        """
+        self.logger.name = (name or self.logger.name)
+        self.logger.filename = (filename or self.logger.filename)
+
+        self._locals['LOGGING']['loggers'][self.logger.name] = {
             'handlers': [],
             'level': 'DEBUG',
             'propagate': True,
-            'filename': os.path.join(path, self.logger_filename)
+            'filename': os.path.join(path, self.logger.filename)
         }
