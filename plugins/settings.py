@@ -3,8 +3,33 @@
 from plugins.models import App
 from plugins.validate import exists
 import logging, os
+# ---------------------------------------------------------------------------------
+class Logger(object):
+    """
+    Class used in the construction of the log file of the application.
+    """
+    def __init__(self, name="plugins.apps.debug", filename=""):
+        self._filename = (filename or (name.replace(".","_")+".log"))
+        self._name = name
+        self._log = None
 
+    @property
+    def name(self): return self._name
+    @name.setter
+    def name(self, n): self._name = n
 
+    @property
+    def filename(self): return self._filename
+    @filename.setter
+    def filename(self, fn): self._filename = fn
+
+    @property
+    def log(self):
+        if self._log is None:
+            self._log = logging.getLogger(self._name)
+        return self._log
+
+# ---------------------------------------------------------------------------------
 class Settings(object):
     """
     Modeling system configuration plugins.
