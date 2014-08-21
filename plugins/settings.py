@@ -1,6 +1,7 @@
 # # Plugins settings
 import logging
 import os
+from django.core.urlresolvers import RegexURLResolver, RegexURLPattern
 
 from plugins.models import App
 from plugins.validate import exists
@@ -70,6 +71,49 @@ class Settings(object):
             else:
                 self.log.debug("settings::installed app not found %s" % app)
 
+    @staticmethod
+    def urlresolver_iterable(urlpatterns):
+        if isinstance(urlpatterns, RegexURLResolver):
+            pattern_iter = [urlpatterns]
+        else:
+            pattern_iter = urlpatterns
+        return pattern_iter
+
+    @staticmethod
+    def urlpatterns_iterable(urlpatterns):
+        if isinstance(urlpatterns, RegexURLPattern):
+            pattern_iter = [urlpatterns]
+        else:
+            pattern_iter = urlpatterns
+        return pattern_iter
+
+    def is_urlconf(self, app, url_conf):
+        def check(urlpatterns):
+            if hasattr(urlpatterns, '__name__'):
+                return urlpatterns.__name__ == app.name + ".urls"
+
+            for urlpattern in urlpatterns:
+                if isinstance(urlpattern, list):
+                    return check(urlpattern)
+
+                if isinstance(urlpattern, RegexURLPattern):
+                    return urlpattern.name == app.name
+        return bool(check(url_conf))
+
+    def _pattern_update(self, app):
+        items = []
+
+        def _update(urlpatterns):
+            for urlpattern in self.urlresolver_iterable(urlpatterns):
+                if isinstance(urlpattern, list):
+                    _update(urlpattern)
+                    break
+                if self.is_urlconf(app, urlpattern.urlconf_name) and urlpattern._regex == app.prefix:
+                    items.append(urlpattern)
+
+        _update(self._locals["urlpatterns"])
+        return items
+
     def set_urlpatterns(self):
         """
         Url patterns settings
@@ -77,6 +121,9 @@ class Settings(object):
         from django.conf.urls import patterns, include, url
 
         for app in App.objects.all():
+            for pattern in self._pattern_update(app):
+                self._locals["urlpatterns"].remove(pattern)
+
             if exists(app.name):
                 self.log.debug("URLS: regex-pattern::add %s" % app)
 

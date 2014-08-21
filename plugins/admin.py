@@ -13,8 +13,8 @@ from plugins.validate import exists
 class AppAdmin(admin.ModelAdmin):
     logger = logging.getLogger(settings.PLUGIN_SETTINGS.get_logger_name())
 
-    @staticmethod
-    def force_url_conf_reload():
+    @classmethod
+    def force_url_conf_reload(cls):
         """
         Remove the url conf standard sys.module makes the url patterns are
         recharged and the urls of the app (plugin) are recognized at runtime.
@@ -29,6 +29,8 @@ class AppAdmin(admin.ModelAdmin):
 
         # urls patterns settings
         settings.PLUGIN_SETTINGS.set_urlpatterns()
+
+        cls.logger.info('urlpatterns: %s' % url_conf.__dict__['urlpatterns'])
 
     def add_configure(self, obj):
         if exists(obj.name) and not obj.name in settings.INSTALLED_APPS:
