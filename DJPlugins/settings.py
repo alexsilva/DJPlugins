@@ -160,13 +160,13 @@ LOGGING = {
 # Plugins settings
 from plugins import settings
 
-PGL_SETTINGS = settings.Settings(locals())
+PLUGIN_SETTINGS = settings.Settings(locals())
 
 # logs settings
-PGL_SETTINGS.set_loggins(os.path.join(os.path.dirname(__file__)))
+PLUGIN_SETTINGS.set_loggins(PROJECT_PATH)
 
 try:
     # apps settings
-    PGL_SETTINGS.set_installed_apps()
+    PLUGIN_SETTINGS.set_installed_apps()
 except OperationalError:
     pass
