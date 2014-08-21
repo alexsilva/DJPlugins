@@ -110,8 +110,6 @@ ROOT_URLCONF = 'DJPlugins.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'DJPlugins.wsgi.application'
 
-import os
-
 TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), '..', 'templates').replace('\\', '/'),)
 
 INSTALLED_APPS = (
