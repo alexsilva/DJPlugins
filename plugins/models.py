@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class App(models.Model):
     name = models.CharField("Application Name", max_length=255)
 
