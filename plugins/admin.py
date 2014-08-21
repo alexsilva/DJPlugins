@@ -4,6 +4,7 @@ import logging
 from django.contrib import admin
 from django.contrib.admin import site
 from django.conf import settings
+from django.utils import importlib
 
 from plugins.models import App
 from plugins.validate import exists
@@ -12,13 +13,22 @@ from plugins.validate import exists
 class AppAdmin(admin.ModelAdmin):
     logger = logging.getLogger(settings.PLUGIN_SETTINGS.get_logger_name())
 
-    def force_url_conf_reload(self):
+    @staticmethod
+    def force_url_conf_reload():
         """
         Remove the url conf standard sys.module makes the url patterns are
         recharged and the urls of the app (plugin) are recognized at runtime.
         """
-        if sys.modules.has_key(settings.ROOT_URLCONF):
-            del sys.modules[settings.ROOT_URLCONF]
+        if settings.ROOT_URLCONF in sys.modules:
+            url_conf = sys.modules[settings.ROOT_URLCONF]
+        else:
+            url_conf = importlib.import_module(settings.ROOT_URLCONF)
+
+        # configuring the object
+        settings.PLUGIN_SETTINGS(url_conf.__dict__)
+
+        # urls patterns settings
+        settings.PLUGIN_SETTINGS.set_urlpatterns()
 
     def add_configure(self, obj):
         if exists(obj.name) and not obj.name in settings.INSTALLED_APPS:

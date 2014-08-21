@@ -158,7 +158,7 @@ LOGGING = {
 # Plugins settings
 from plugins import settings
 
-PLUGIN_SETTINGS = settings.Settings(locals())
+PLUGIN_SETTINGS = settings.Settings(globals())
 
 # logs settings
 PLUGIN_SETTINGS.set_loggins(PROJECT_PATH)

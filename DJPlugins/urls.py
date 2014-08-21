@@ -20,7 +20,7 @@ urlpatterns = patterns('',
 from django.conf import settings
 
 # configuring the object
-settings.PLUGIN_SETTINGS(locals())
+settings.PLUGIN_SETTINGS(globals())
 
 # urls patterns settings
 settings.PLUGIN_SETTINGS.set_urlpatterns()
