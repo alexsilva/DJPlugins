@@ -87,7 +87,8 @@ class Settings(object):
             pattern_iter = urlpatterns
         return pattern_iter
 
-    def is_urlconf(self, app, url_conf):
+    @staticmethod
+    def is_urlconf(app, url_conf):
         def check(urlpatterns):
             if hasattr(urlpatterns, '__name__'):
                 return urlpatterns.__name__ == app.name + ".urls"
