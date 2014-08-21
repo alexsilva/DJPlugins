@@ -80,9 +80,7 @@ class Settings(object):
             if exists(app.name):
                 self.log.debug("URLS: regex-pattern::add %s" % app)
 
-                self._locals["urlpatterns"] += patterns('',
-                                                        url(app.prefix, include(app.name + ".urls")),
-                )
+                self._locals["urlpatterns"] += patterns('', url(app.prefix, include(app.name + ".urls")))
             else:
                 self.log.debug("URLS: regex-pattern::app not found %s" % app)
 
@@ -97,9 +95,16 @@ class Settings(object):
         self.logger.name = (name or self.logger.name)
         self.logger.filename = (filename or self.logger.filename)
 
+        self._locals['LOGGING']['handlers'].update({
+            'plugins': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'filename': os.path.join(path, self.logger.filename)
+            }
+        })
+
         self._locals['LOGGING']['loggers'][self.logger.name] = {
-            'handlers': [],
+            'handlers': ['plugins'],
             'level': 'DEBUG',
-            'propagate': True,
-            'filename': os.path.join(path, self.logger.filename)
+            'propagate': True
         }
