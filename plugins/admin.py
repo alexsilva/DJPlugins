@@ -10,7 +10,7 @@ from plugins.validate import exists
 
 
 class AppAdmin(admin.ModelAdmin):
-    logger = logging.getLogger(settings.PGL_SETTINGS.get_logger_name())
+    logger = logging.getLogger(settings.PLUGIN_SETTINGS.get_logger_name())
 
     def force_url_conf_reload(self):
         """
@@ -54,5 +54,4 @@ class AppAdmin(admin.ModelAdmin):
 
         self.del_configure(obj)
 
-# --------------------------------------------------------------------------
 site.register(App, AppAdmin)
