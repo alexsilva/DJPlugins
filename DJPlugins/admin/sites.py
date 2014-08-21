@@ -1,10 +1,27 @@
 from django.contrib.admin import sites
+from django.contrib.admin.actions import delete_selected
 
 
 class AdminSite(sites.AdminSite):
     """
     Represents the administration, where only authorized users have access.
     """
+    def __init__(self, *args, **kwargs):
+        super(AdminSite, self).__init__(*args, **kwargs)
+        self.disable_action('delete_selected')
+        self.add_action(self._delete_selected, 'delete_selected')
+
+    @staticmethod
+    def _delete_selected(modeladmin, request, queryset):
+        _delete_qs = queryset.delete
+
+        def delete():
+            for obj in queryset:
+                modeladmin.delete_model(request, obj)
+            _delete_qs()
+
+        queryset.delete = delete
+        return delete_selected(modeladmin, request, queryset)
 
     def index(self, request, extra_context=None):
         response = super(AdminSite, self).index(request, extra_context)
