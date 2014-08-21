@@ -1,24 +1,16 @@
 from django.conf.urls import patterns, include, url
 
 from admin.sites import AdminSite, PublicSite
-
-
-# Uncomment the next two lines to enable the admin:
-
-# Creating two objects websites. but their behavior will be different.
-# The need to rewrite the admin site is in fact apply plugins on it.
-admin.sites.site = admin.site = AdminSite()
-publicSite = PublicSite()
-
 from django.contrib import admin
+
+admin.site = AdminSite()
+publicSite = PublicSite()
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^site/', include(publicSite.urls)),
 
