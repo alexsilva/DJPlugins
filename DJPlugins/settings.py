@@ -1,5 +1,7 @@
 # Django settings for DJPlugins project.
 import os
+from django.db import OperationalError
+
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
@@ -161,5 +163,8 @@ PGL_SETTINGS = settings.Settings(locals())
 # logs settings
 PGL_SETTINGS.set_loggins(os.path.join(os.path.dirname(__file__)))
 
-# apps settings
-PGL_SETTINGS.set_installed_apps()
+try:
+    # apps settings
+    PGL_SETTINGS.set_installed_apps()
+except OperationalError:
+    pass
