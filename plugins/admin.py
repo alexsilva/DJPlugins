@@ -14,56 +14,57 @@ class AppAdmin(admin.ModelAdmin):
     logger = logging.getLogger(settings.PLUGIN_SETTINGS.get_logger_name())
 
     @classmethod
-    def force_url_conf_reload(cls):
+    def update_urlconf(cls, *args):
         """
         Remove the url conf standard sys.module makes the url patterns are
         recharged and the urls of the app (plugin) are recognized at runtime.
         """
         if settings.ROOT_URLCONF in sys.modules:
-            url_conf = sys.modules[settings.ROOT_URLCONF]
+            urlconf = sys.modules[settings.ROOT_URLCONF]
         else:
-            url_conf = importlib.import_module(settings.ROOT_URLCONF)
+            urlconf = importlib.import_module(settings.ROOT_URLCONF)
 
         # configuring the object
-        settings.PLUGIN_SETTINGS(url_conf.__dict__)
+        settings.PLUGIN_SETTINGS(urlconf.__dict__)
 
         # urls patterns settings
-        settings.PLUGIN_SETTINGS.set_urlpatterns()
+        settings.PLUGIN_SETTINGS.set_urlpatterns(*args)
 
-        cls.logger.info('urlpatterns: %s' % url_conf.__dict__['urlpatterns'])
-
-    def add_configure(self, obj):
+    def after_save_model(self, obj):
         if exists(obj.name) and not obj.name in settings.INSTALLED_APPS:
             self.logger.debug("MODEL: settings::installed-app " + obj.name)
-            settings._wrapped.INSTALLED_APPS += (obj.name, )  # hardcore change!
+            # hardcore change!
+            settings._wrapped.INSTALLED_APPS += (obj.name, )
         else:
             self.logger.debug("MODEL: settings::installed-app " + obj.name)
 
-        # Force reloading the url conf standard.
-        self.force_url_conf_reload()
-
-    def del_configure(self, obj):
+    def after_delete_model(self, obj):
         if obj.name in settings.INSTALLED_APPS:
             self.logger.debug("MODEL: settings::delete-app " + obj.name)
 
             apps = list(settings.INSTALLED_APPS)
             apps.remove(obj.name)
 
-            settings._wrapped.INSTALLED_APPS = apps  # hardcore change!
+            # hardcore change!
+            settings._wrapped.INSTALLED_APPS = apps
         else:
             self.logger.debug("MODEL: settings::delete-app fail " + obj.name)
-
-        # Force reloading the url conf standard.
-        self.force_url_conf_reload()
 
     def save_model(self, request, obj, form, change):
         super(AppAdmin, self).save_model(request, obj, form, change)
 
-        if not change: self.add_configure(obj)
+        if not change:
+            self.after_save_model(obj)
+
+        # Force reloading the url conf standard.
+        self.update_urlconf()
 
     def delete_model(self, request, obj):
         super(AppAdmin, self).delete_model(request, obj)
 
-        self.del_configure(obj)
+        self.after_delete_model(obj)
+
+        # Force reloading the url conf standard.
+        self.update_urlconf(obj)
 
 site.register(App, AppAdmin)

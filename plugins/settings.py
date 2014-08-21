@@ -115,7 +115,7 @@ class Settings(object):
         _update(self._locals["urlpatterns"])
         return items
 
-    def set_urlpatterns(self):
+    def set_urlpatterns(self, *args):
         """
         Url patterns settings
         """
@@ -131,6 +131,10 @@ class Settings(object):
                 self._locals["urlpatterns"] += patterns('', url(app.prefix, include(app.name + ".urls")))
             else:
                 self.log.debug("URLS: regex-pattern::app not found %s" % app)
+
+        for app in args:
+            for pattern in self._pattern_update(app):
+                self._locals["urlpatterns"].remove(pattern)
 
     def set_loggins(self, path, name='', filename=''):
         """
