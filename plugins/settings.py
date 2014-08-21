@@ -1,8 +1,9 @@
 # # Plugins settings
-from plugins.models import App
-from plugins.validate import exists
 import logging
 import os
+
+from plugins.models import App
+from plugins.validate import exists
 
 
 class Logger(object):
@@ -81,7 +82,7 @@ class Settings(object):
 
                 self._locals["urlpatterns"] += patterns('',
                                                         url(app.prefix, include(app.name + ".urls")),
-                                                        )
+                )
             else:
                 self.log.debug("URLS: regex-pattern::app not found %s" % app)
 

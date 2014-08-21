@@ -1,5 +1,5 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('testonly',
-    url(r'', "views.say_hello"),
+                       url(r'', "views.say_hello"),
 )

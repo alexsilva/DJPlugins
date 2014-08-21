@@ -1,4 +1,3 @@
-
 def exists(name):
     """
      check if the app exists in path

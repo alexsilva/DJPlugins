@@ -1,6 +1,6 @@
 from django.contrib.admin import sites
 
-# ---------------------------------------------------------------------------------------------------------------------
+
 class AdminSite(sites.AdminSite):
     """
     Represents the administration, where only authorized users have access.
@@ -17,7 +17,7 @@ class AdminSite(sites.AdminSite):
 
         return response
 
-# ---------------------------------------------------------------------------------------------------------------------
+
 class PublicSite(sites.AdminSite):
     """
     Is the public part of the site where the plugins will make the necessary adjustments in the content.
